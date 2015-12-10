@@ -1,0 +1,35 @@
+
+enum AnEnum : short {
+	Apples,
+	Pears,
+	Bananas,
+}
+
+struct Foo {
+	id: ulong;
+	count: short;
+	prefix:ubyte;
+	length:int;
+}
+
+struct Bar {
+	parent: Foo;
+	time: int;
+	ratio: float;
+	size: short;
+}
+
+table FooBar {
+	sibling: Bar;
+	name: string;
+	rating: double;
+	postfix: ubyte;
+}
+
+table FooBarContainer {
+	list: [FooBar];
+	initialized: bool;
+	fruit: short;
+	location: string;
+}
+

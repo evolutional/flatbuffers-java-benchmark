@@ -1,5 +1,7 @@
 // automatically generated, do not modify
 
+package fbbench;
+
 import java.nio.*;
 import java.lang.*;
 import java.util.*;
@@ -22,13 +24,13 @@ public final class FooBarContainer extends Table {
   public ByteBuffer locationAsByteBuffer() { return __vector_as_bytebuffer(10, 1); }
 
   public static int createFooBarContainer(FlatBufferBuilder builder,
-      int listOffset,
+      int list,
       boolean initialized,
       short fruit,
-      int locationOffset) {
+      int location) {
     builder.startObject(4);
-    FooBarContainer.addLocation(builder, locationOffset);
-    FooBarContainer.addList(builder, listOffset);
+    FooBarContainer.addLocation(builder, location);
+    FooBarContainer.addList(builder, list);
     FooBarContainer.addFruit(builder, fruit);
     FooBarContainer.addInitialized(builder, initialized);
     return FooBarContainer.endFooBarContainer(builder);
@@ -45,5 +47,6 @@ public final class FooBarContainer extends Table {
     int o = builder.endObject();
     return o;
   }
+  public static void finishFooBarContainerBuffer(FlatBufferBuilder builder, int offset) { builder.finish(offset); }
 };
 

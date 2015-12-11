@@ -57,6 +57,8 @@ namespace FlatBench
 
         private BenchmarkResult Measure(string name, Action action, int warmupIterations, int measurements)
         {
+            const double TicksPerMicrosecond = 10.0;
+
             var result = new BenchmarkResult
             {
                 Name = name,
@@ -89,7 +91,7 @@ namespace FlatBench
 
                 sw.Stop();
 
-                result.Measurements[i] = sw.Elapsed.TotalMilliseconds;
+                result.Measurements[i] = sw.ElapsedTicks / TicksPerMicrosecond; // http://stackoverflow.com/questions/1206367/c-sharp-time-in-microseconds
             }
 
             return result;
@@ -105,15 +107,10 @@ namespace FlatBench
                 _flatBench.Use(_buffer);
             }, warmupIterations, measurements);
 
-            var e = new TimeSpan(0, 0, 0, 0, (int)(encode.Mean * 1000000));
-            var d = new TimeSpan(0, 0, 0, 0, (int)(decode.Mean * 1000000));
-            var u = new TimeSpan(0, 0, 0, 0, (int)(use.Mean * 1000000));
-            var du = d + u;
-
-            Console.WriteLine("{0,-25}\t{1, 10} {2, 6}  Unit {3,10}", "Name", "Mean", "StdD", "1M/sec");
-            Console.WriteLine("{0, -25}\t{1, 10:0.000} {2,6:0.000} ms/op {3,10:0.0}", encode.Name, encode.Mean, encode.StandardDeviation, e.TotalSeconds);
-            Console.WriteLine("{0, -25}\t{1, 10:0.000} {2,6:0.000} ms/op {3,10:0.0}", decode.Name, decode.Mean, decode.StandardDeviation, d.TotalSeconds);
-            Console.WriteLine("{0, -25}\t{1, 10:0.000} {2,6:0.000} ms/op {3,10:0.0}", use.Name, use.Mean, use.StandardDeviation, u.TotalSeconds);
+            Console.WriteLine("{0,-25}\t{1, 10} {2, 6}  Unit", "Name", "Mean", "StdD");
+            Console.WriteLine("{0, -25}\t{1, 10:0.000} {2,6:0.000} us/op", encode.Name, encode.Mean, encode.StandardDeviation);
+            Console.WriteLine("{0, -25}\t{1, 10:0.000} {2,6:0.000} us/op", decode.Name, decode.Mean, decode.StandardDeviation);
+            Console.WriteLine("{0, -25}\t{1, 10:0.000} {2,6:0.000} us/op", use.Name, use.Mean, use.StandardDeviation);
         }
 
     }

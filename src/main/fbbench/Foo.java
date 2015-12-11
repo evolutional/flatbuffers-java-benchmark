@@ -1,5 +1,7 @@
 // automatically generated, do not modify
 
+package fbbench;
+
 import java.nio.*;
 import java.lang.*;
 import java.util.*;
@@ -13,16 +15,16 @@ public final class Foo extends Struct {
   public void mutateId(long id) { bb.putLong(bb_pos + 0, id); }
   public short count() { return bb.getShort(bb_pos + 8); }
   public void mutateCount(short count) { bb.putShort(bb_pos + 8, count); }
-  public int prefix() { return bb.get(bb_pos + 10) & 0xFF; }
-  public void mutatePrefix(int prefix) { bb.put(bb_pos + 10, (byte)prefix); }
-  public int length() { return bb.getInt(bb_pos + 12); }
-  public void mutateLength(int length) { bb.putInt(bb_pos + 12, length); }
+  public byte prefix() { return bb.get(bb_pos + 10); }
+  public void mutatePrefix(byte prefix) { bb.put(bb_pos + 10, prefix); }
+  public long length() { return (long)bb.getInt(bb_pos + 12) & 0xFFFFFFFFL; }
+  public void mutateLength(long length) { bb.putInt(bb_pos + 12, (int)length); }
 
-  public static int createFoo(FlatBufferBuilder builder, long id, short count, int prefix, int length) {
+  public static int createFoo(FlatBufferBuilder builder, long id, short count, byte prefix, long length) {
     builder.prep(8, 16);
-    builder.putInt(length);
+    builder.putInt((int)(length & 0xFFFFFFFFL));
     builder.pad(1);
-    builder.putByte((byte)prefix);
+    builder.putByte(prefix);
     builder.putShort(count);
     builder.putLong(id);
     return builder.offset();

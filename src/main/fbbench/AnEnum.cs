@@ -1,5 +1,8 @@
 // automatically generated, do not modify
 
+namespace fbbench
+{
+
 public enum AnEnum : short
 {
  Apples = 0,
@@ -7,3 +10,5 @@ public enum AnEnum : short
  Bananas = 2,
 };
 
+
+}

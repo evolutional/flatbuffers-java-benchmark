@@ -1,5 +1,7 @@
 // automatically generated, do not modify
 
+package fbbench;
+
 public final class AnEnum {
   private AnEnum() { }
   public static final short Apples = 0;

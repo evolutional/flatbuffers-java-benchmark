@@ -1,4 +1,6 @@
 
+namespace fbbench;
+
 enum AnEnum : short {
 	Apples,
 	Pears,
@@ -8,15 +10,15 @@ enum AnEnum : short {
 struct Foo {
 	id: ulong;
 	count: short;
-	prefix:ubyte;
-	length:int;
+	prefix: byte;
+	length:uint;
 }
 
 struct Bar {
 	parent: Foo;
 	time: int;
 	ratio: float;
-	size: short;
+	size: ushort;
 }
 
 table FooBar {
@@ -29,7 +31,8 @@ table FooBar {
 table FooBarContainer {
 	list: [FooBar];
 	initialized: bool;
-	fruit: short;
+	fruit: AnEnum;
 	location: string;
 }
 
+root_type FooBarContainer;

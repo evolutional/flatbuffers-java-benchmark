@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using fbbench;
 using FlatBuffers;
 using Enum = System.Enum;
 
@@ -17,7 +18,7 @@ namespace FlatBench
         private const int _vecLen = 3;
         private const string _location = "http://google.com/flatbuffers/";
         private const bool _initialized = true;
-        private const short _anEnum = (short) AnEnum.Bananas;
+        private const AnEnum _anEnum = AnEnum.Bananas;
 
 
         public int Encode(ByteBuffer buffer)
@@ -39,12 +40,12 @@ namespace FlatBench
                     // Foo fields (nested struct)
                         0xABADCAFEABADCAFEL + (ulong)i,
                         (short)(10000 + i),
-                        (byte)('@' + i),
-                        1000000 + i,
+                        (sbyte)('@' + i),
+                        1000000 + (uint)i,
                     // Bar fields
                         123456 + i,
                         3.14159f + i,
-                        (short)(10000 + i));
+                        (ushort)(10000 + i));
 
                 FooBar.AddSibling(builder, bar);
                 var fooBar = FooBar.EndFooBar(builder);
@@ -79,7 +80,7 @@ namespace FlatBench
             long sum = 0;
             sum += fooBarContainer.Initialized ? 1 : 0;
             sum += fooBarContainer.Location.Length;
-            sum += fooBarContainer.Fruit;
+            sum += (short)fooBarContainer.Fruit;
 
             var length = fooBarContainer.ListLength;
             for (var i = 0; i < length; i++)

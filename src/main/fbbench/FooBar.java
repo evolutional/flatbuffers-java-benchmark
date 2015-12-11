@@ -1,5 +1,7 @@
 // automatically generated, do not modify
 
+package fbbench;
+
 import java.nio.*;
 import java.lang.*;
 import java.util.*;
@@ -24,7 +26,7 @@ public final class FooBar extends Table {
   public static void addSibling(FlatBufferBuilder builder, int siblingOffset) { builder.addStruct(0, siblingOffset, 0); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(1, nameOffset, 0); }
   public static void addRating(FlatBufferBuilder builder, double rating) { builder.addDouble(2, rating, 0); }
-  public static void addPostfix(FlatBufferBuilder builder, int postfix) { builder.addByte(3, (byte)postfix, 0); }
+  public static void addPostfix(FlatBufferBuilder builder, int postfix) { builder.addByte(3, (byte)(postfix & 0xFF), 0); }
   public static int endFooBar(FlatBufferBuilder builder) {
     int o = builder.endObject();
     return o;

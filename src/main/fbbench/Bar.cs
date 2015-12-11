@@ -1,5 +1,8 @@
 // automatically generated, do not modify
 
+namespace fbbench
+{
+
 using FlatBuffers;
 
 public sealed class Bar : Struct {
@@ -11,22 +14,24 @@ public sealed class Bar : Struct {
   public void MutateTime(int time) { bb.PutInt(bb_pos + 16, time); }
   public float Ratio { get { return bb.GetFloat(bb_pos + 20); } }
   public void MutateRatio(float ratio) { bb.PutFloat(bb_pos + 20, ratio); }
-  public short Size { get { return bb.GetShort(bb_pos + 24); } }
-  public void MutateSize(short size) { bb.PutShort(bb_pos + 24, size); }
+  public ushort Size { get { return bb.GetUshort(bb_pos + 24); } }
+  public void MutateSize(ushort size) { bb.PutUshort(bb_pos + 24, size); }
 
-  public static Offset<Bar> CreateBar(FlatBufferBuilder builder, ulong parent_Id, short parent_Count, byte parent_Prefix, int parent_Length, int Time, float Ratio, short Size) {
+  public static Offset<Bar> CreateBar(FlatBufferBuilder builder, ulong parent_Id, short parent_Count, sbyte parent_Prefix, uint parent_Length, int Time, float Ratio, ushort Size) {
     builder.Prep(8, 32);
     builder.Pad(6);
-    builder.PutShort(Size);
+    builder.PutUshort(Size);
     builder.PutFloat(Ratio);
     builder.PutInt(Time);
     builder.Prep(8, 16);
-    builder.PutInt(parent_Length);
+    builder.PutUint(parent_Length);
     builder.Pad(1);
-    builder.PutByte(parent_Prefix);
+    builder.PutSbyte(parent_Prefix);
     builder.PutShort(parent_Count);
     builder.PutUlong(parent_Id);
     return new Offset<Bar>(builder.Offset);
   }
 };
 
+
+}

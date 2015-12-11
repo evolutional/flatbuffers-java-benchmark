@@ -1,3 +1,1 @@
-pushd fbbench
-.\..\flatc -j -n --no-includes --gen-mutable fbbench.fbs
-popd
+.\flatc -j -n --no-includes --gen-mutable fbbench.fbs

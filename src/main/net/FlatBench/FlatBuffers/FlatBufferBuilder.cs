@@ -75,10 +75,11 @@ namespace FlatBuffers
 
         public void Pad(int size)
         {
-            for (var i = 0; i < size; i++)
+            if (size > 0)
             {
-                _bb.PutByte(--_space, 0);
-            }
+                _space -= size;
+                _bb.PutByte(_space, 0, size);
+            }            
         }
 
         // Doubles the size of the ByteBuffer, and copies the old data towards
@@ -122,7 +123,8 @@ namespace FlatBuffers
                 _space += (int)_bb.Length - oldBufSize;
 
             }
-            Pad(alignSize);
+            if (alignSize > 0)
+                Pad(alignSize);
         }
 
         public void PutBool(bool x)
@@ -283,11 +285,10 @@ namespace FlatBuffers
         public StringOffset CreateString(string s)
         {
             NotNested();
-            byte[] utf8 = Encoding.UTF8.GetBytes(s);
-            AddByte((byte)0);
-            StartVector(1, utf8.Length, 1);
-            Buffer.BlockCopy(utf8, 0, _bb.Data, _space -= utf8.Length,
-                             utf8.Length);
+            var utf8StringLen = Encoding.UTF8.GetByteCount(s);
+            AddByte(0);
+            StartVector(1, utf8StringLen, 1);
+            Encoding.UTF8.GetBytes(s, 0, s.Length, _bb.Data, _space -= utf8StringLen);
             return new StringOffset(EndVector().Value);
         }
 
@@ -311,7 +312,7 @@ namespace FlatBuffers
             AddInt((int)0);
             var vtableloc = Offset;
             // Write out the current vtable.
-            for (int i = _vtableSize - 1; i >= 0 ; i--) {
+            for (int i = _vtableSize - 1; i >= 0 ; --i) {
                 // Offset relative to the start of the table.
                 short off = (short)(_vtable[i] != 0
                                         ? vtableloc - _vtable[i]
@@ -329,7 +330,7 @@ namespace FlatBuffers
 
             // Search for an existing vtable that matches the current one.
             int existingVtable = 0;
-            for (int i = 0; i < _numVtables; i++) {
+            for (int i = 0; i < _numVtables; ++i) {
                 int vt1 = _bb.Length - _vtables[i];
                 int vt2 = _space;
                 short len = _bb.GetShort(vt1);
@@ -358,9 +359,11 @@ namespace FlatBuffers
                 // vtables.
                 if (_numVtables == _vtables.Length)
                 {
-                    // Arrays.CopyOf(vtables num_vtables * 2);
                     var newvtables = new int[ _numVtables * 2];
-                    Array.Copy(_vtables, newvtables, _vtables.Length);
+                    for (var i = 0; i < _vtables.Length; ++i)
+                    {
+                        newvtables[i] = _vtables[i];
+                    }
 
                     _vtables = newvtables;
                 };

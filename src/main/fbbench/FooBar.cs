@@ -1,5 +1,8 @@
 // automatically generated, do not modify
 
+namespace fbbench
+{
+
 using FlatBuffers;
 
 public sealed class FooBar : Table {
@@ -26,3 +29,5 @@ public sealed class FooBar : Table {
   }
 };
 
+
+}

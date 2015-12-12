@@ -15,6 +15,7 @@
  */
 
 //#define UNSAFE_BYTEBUFFER  // uncomment this line to use faster ByteBuffer
+//#define NOASSERT_BYTEBUFFER // define this to remove bounds checking from the Get/Put methods. Could be dangerous with UNSAFE_BYTEBUFFER
 
 using System;
 
@@ -106,7 +107,9 @@ namespace FlatBuffers
 
         protected ulong ReadLittleEndian(int offset, int count)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, count);
+#endif
             ulong r = 0;
             if (BitConverter.IsLittleEndian)
             {
@@ -126,6 +129,7 @@ namespace FlatBuffers
         }
 #endif // !UNSAFE_BYTEBUFFER
 
+#if !NOASSERT_BYTEBUFFER
         private void AssertOffsetAndLength(int offset, int length)
         {
             if (offset < 0 ||
@@ -133,26 +137,33 @@ namespace FlatBuffers
                 offset + length > _buffer.Length)
                 throw new ArgumentOutOfRangeException();
         }
+#endif
 
         public void PutSbyte(int offset, sbyte value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(sbyte));
+#endif
             _buffer[offset] = (byte)value;
         }
 
         public void PutByte(int offset, byte value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(byte));
+#endif
             _buffer[offset] = value;
         }
-
+#if PERF_PAD_OPTIMIZATION
         public void PutByte(int offset, byte value, int count)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(byte) * count);
+#endif
             for (var i = 0; i < count; ++i)
                 _buffer[offset + i] = value;
         }
-
+#endif
         // this method exists in order to conform with Java ByteBuffer standards
         public void Put(int offset, byte value)
         {
@@ -168,7 +179,9 @@ namespace FlatBuffers
 
         public unsafe void PutUshort(int offset, ushort value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(ushort));
+#endif
             fixed (byte* ptr = _buffer)
             {
                 *(ushort*)(ptr + offset) = BitConverter.IsLittleEndian
@@ -184,7 +197,9 @@ namespace FlatBuffers
 
         public unsafe void PutUint(int offset, uint value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(uint));
+#endif
             fixed (byte* ptr = _buffer)
             {
                 *(uint*)(ptr + offset) = BitConverter.IsLittleEndian
@@ -200,8 +215,9 @@ namespace FlatBuffers
 
         public unsafe void PutUlong(int offset, ulong value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(ulong));
-
+#endif
             fixed (byte* ptr = _buffer)
             {
                 *(ulong*)(ptr + offset) = BitConverter.IsLittleEndian
@@ -212,7 +228,9 @@ namespace FlatBuffers
 
         public unsafe void PutFloat(int offset, float value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(float));
+#endif
             fixed (byte* ptr = _buffer)
             {
                 if (BitConverter.IsLittleEndian)
@@ -228,7 +246,9 @@ namespace FlatBuffers
 
         public unsafe void PutDouble(int offset, double value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(double));
+#endif
             fixed (byte* ptr = _buffer)
             {
                 if (BitConverter.IsLittleEndian)
@@ -246,43 +266,63 @@ namespace FlatBuffers
         // Slower versions of Put* for when unsafe code is not allowed.
         public void PutShort(int offset, short value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(short));
+#endif
             WriteLittleEndian(offset, sizeof(short), (ulong)value);
         }
 
         public void PutUshort(int offset, ushort value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(ushort));
+#endif
+
             WriteLittleEndian(offset, sizeof(ushort), (ulong)value);
         }
 
         public void PutInt(int offset, int value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(int));
+#endif
+
             WriteLittleEndian(offset, sizeof(int), (ulong)value);
         }
 
         public void PutUint(int offset, uint value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(uint));
+#endif
+
             WriteLittleEndian(offset, sizeof(uint), (ulong)value);
         }
 
         public void PutLong(int offset, long value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(long));
+#endif
+
             WriteLittleEndian(offset, sizeof(long), (ulong)value);
         }
 
         public void PutUlong(int offset, ulong value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(ulong));
+#endif
+
             WriteLittleEndian(offset, sizeof(ulong), value);
         }
 
         public void PutFloat(int offset, float value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(float));
+#endif
+
             floathelper[0] = value;
             Buffer.BlockCopy(floathelper, 0, inthelper, 0, sizeof(float));
             WriteLittleEndian(offset, sizeof(float), (ulong)inthelper[0]);
@@ -290,7 +330,10 @@ namespace FlatBuffers
 
         public void PutDouble(int offset, double value)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(double));
+#endif
+
             doublehelper[0] = value;
             Buffer.BlockCopy(doublehelper, 0, ulonghelper, 0, sizeof(double));
             WriteLittleEndian(offset, sizeof(double), ulonghelper[0]);
@@ -300,13 +343,19 @@ namespace FlatBuffers
 
         public sbyte GetSbyte(int index)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(index, sizeof(sbyte));
+#endif
+
             return (sbyte)_buffer[index];
         }
 
         public byte Get(int index)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(index, sizeof(byte));
+#endif
+
             return _buffer[index];
         }
 
@@ -319,7 +368,10 @@ namespace FlatBuffers
 
         public unsafe ushort GetUshort(int offset)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(ushort));
+#endif
+
             fixed (byte* ptr = _buffer)
             {
                 return BitConverter.IsLittleEndian
@@ -335,7 +387,10 @@ namespace FlatBuffers
 
         public unsafe uint GetUint(int offset)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(uint));
+#endif
+
             fixed (byte* ptr = _buffer)
             {
                 return BitConverter.IsLittleEndian
@@ -351,7 +406,10 @@ namespace FlatBuffers
 
         public unsafe ulong GetUlong(int offset)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(ulong));
+#endif
+
             fixed (byte* ptr = _buffer)
             {
                 return BitConverter.IsLittleEndian
@@ -362,7 +420,10 @@ namespace FlatBuffers
 
         public unsafe float GetFloat(int offset)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(float));
+#endif
+
             fixed (byte* ptr = _buffer)
             {
                 if (BitConverter.IsLittleEndian)
@@ -379,7 +440,10 @@ namespace FlatBuffers
 
         public unsafe double GetDouble(int offset)
         {
+#if !NOASSERT_BYTEBUFFER
             AssertOffsetAndLength(offset, sizeof(double));
+#endif
+
             fixed (byte* ptr = _buffer)
             {
                 if (BitConverter.IsLittleEndian)

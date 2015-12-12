@@ -75,11 +75,14 @@ namespace FlatBuffers
 
         public void Pad(int size)
         {
-            if (size > 0)
+#if PERF_PAD_OPTIMIZATION
+             _bb.PutByte(_space -= size, 0, size);
+#else
+            for (var i = 0; i < size; i++)
             {
-                _space -= size;
-                _bb.PutByte(_space, 0, size);
-            }            
+                _bb.PutByte(--_space, 0);
+            }
+#endif
         }
 
         // Doubles the size of the ByteBuffer, and copies the old data towards
@@ -123,7 +126,9 @@ namespace FlatBuffers
                 _space += (int)_bb.Length - oldBufSize;
 
             }
+#if PERF_PAD_OPTIMIZATION
             if (alignSize > 0)
+#endif
                 Pad(alignSize);
         }
 
@@ -284,12 +289,22 @@ namespace FlatBuffers
 
         public StringOffset CreateString(string s)
         {
+#if !CREATESTRING_OPTIMIZATION
             NotNested();
-            var utf8StringLen = Encoding.UTF8.GetByteCount(s);
+            byte[] utf8 = Encoding.UTF8.GetBytes(s);
+            AddByte((byte)0);
+            StartVector(1, utf8.Length, 1);
+            Buffer.BlockCopy(utf8, 0, _bb.Data, _space -= utf8.Length,
+                             utf8.Length);
+            return new StringOffset(EndVector().Value);
+#else
+            NotNested();            
             AddByte(0);
+            var utf8StringLen = Encoding.UTF8.GetByteCount(s);
             StartVector(1, utf8StringLen, 1);
             Encoding.UTF8.GetBytes(s, 0, s.Length, _bb.Data, _space -= utf8StringLen);
             return new StringOffset(EndVector().Value);
+#endif
         }
 
         // Structs are stored inline, so nothing additional is being added.
